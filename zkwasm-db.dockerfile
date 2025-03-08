@@ -9,7 +9,9 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libclang-dev \
     curl \
-    musl-tools  # 关键：安装 musl 以支持静态编译
+    musl-tools \ 
+    musl-dev \
+    g++ 
 
 # 设置工作目录
 WORKDIR /usr/src/
