@@ -29,10 +29,11 @@ WORKDIR /usr/src/zkwasm-typescript-mini-server/dbservice
 # Build the application
 RUN cargo build --release
 
-FROM alpine:latest
+FROM rust:alpine3.21
 
 WORKDIR /zkdb
 
-COPY --from=builder /usr/src/zkwasm-typescript-mini-server/target/release/csm_service /zkdb/csm_service
+COPY --from=builder /usr/src/zkwasm-typescript-mini-server/target/release/csm_service .
 
+RUN chmod +x csm_service
 EXPOSE 3030
