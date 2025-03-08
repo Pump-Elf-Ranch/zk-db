@@ -1,13 +1,8 @@
 # Use the official Rust image from the Docker Hub
 FROM rust:alpine3.21 AS builder
-# Install Node.js 18.6
-RUN apt-get update && \
-    apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs=18.6.0-1nodesource1
 
 # Install Git, CMake, and other dependencies
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     git \
     cmake \
     pkg-config \
