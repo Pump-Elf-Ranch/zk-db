@@ -1,0 +1,37 @@
+name: Build And Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      commit_sha: ${{ steps.get-commit-sha.outputs.sha }}
+      ecr_registry: ${{ steps.login-ecr.outputs.registry }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get short SHA
+        id: get-commit-sha
+        run: echo "::set-output name=sha::$(git rev-parse --short=7 HEAD)"
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_ALIL_USERNAME }}
+          password: ${{ secrets.DOCKER_ALIL_PASSWORD }}
+          registry: "registry.ap-northeast-1.aliyuncs.com"
+
+      - name: Build and push Docker image
+        env:
+          COMMIT_SHA: ${{ steps.get-commit-sha.outputs.sha }}
+
+        run: |
+          IMAGE_URL="registry.ap-northeast-1.aliyuncs.com/omni-new/zkdb:${COMMIT_SHA}"
+          echo $IMAGE_URL
+          docker build -t ${IMAGE_URL} -f zkwasm-db.dockerfile .
+          docker push ${IMAGE_URL}
+
