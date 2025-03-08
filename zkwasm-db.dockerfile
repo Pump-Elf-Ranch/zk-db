@@ -1,7 +1,7 @@
 # 第一阶段：构建 Rust 项目
 FROM rust:latest AS builder
 
-# 安装构建所需的依赖项
+# 安装构建依赖，包括 musl 和 g++
 RUN apt-get update && apt-get install -y \
     git \
     cmake \
@@ -9,9 +9,17 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libclang-dev \
     curl \
-    musl-tools \ 
+    musl-tools \
     musl-dev \
-    g++ 
+    g++ \
+    musl-gcc
+
+# 设置 musl 交叉编译环境
+ENV CC=musl-gcc
+ENV CXX=musl-g++
+
+# 添加 Rust 的 musl 目标
+RUN rustup target add x86_64-unknown-linux-musl
 
 # 设置工作目录
 WORKDIR /usr/src/
@@ -22,8 +30,8 @@ RUN git clone https://github.com/DelphinusLab/zkwasm-typescript-mini-server --br
 WORKDIR /usr/src/zkwasm-typescript-mini-server/dbservice
 
 # 使用 musl 进行静态编译
-RUN rustup target add x86_64-unknown-linux-musl && \
-    cargo build --release --target x86_64-unknown-linux-musl
+# 编译 Rust 代码，使用 musl 目标进行静态编译
+RUN cargo build --release --target x86_64-unknown-linux-musl
 
 # 第二阶段：最小运行环境
 FROM alpine:latest
