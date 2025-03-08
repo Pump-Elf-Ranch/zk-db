@@ -6,9 +6,7 @@ RUN apt-get update && \
     curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs=18.6.0-1nodesource1
 
-# Install Git
-RUN apt-get update && apt-get install -y git
-
+# Install Git, CMake, and other dependencies
 RUN apt-get update && apt-get install -y \
     git \
     cmake \
@@ -34,6 +32,14 @@ FROM rust:alpine3.21
 WORKDIR /zkdb
 
 COPY --from=builder /usr/src/zkwasm-typescript-mini-server/target/release/csm_service .
+
+RUN apt-get update && apt-get install -y \
+    git \
+    cmake \
+    pkg-config \
+    libssl-dev \
+    libclang-dev \
+    curl
 
 RUN chmod +x csm_service
 EXPOSE 3030
