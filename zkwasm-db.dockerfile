@@ -11,8 +11,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     musl-tools \
     musl-dev \
-    g++ \
-    musl-gcc 
+    g++
 
 # 设置工作目录
 WORKDIR /usr/src/
