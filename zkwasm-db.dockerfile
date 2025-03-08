@@ -7,34 +7,27 @@ RUN apt-get update && apt-get install -y \
     cmake \
     pkg-config \
     libssl-dev \
-    libclang-dev \
+    clang \
     curl \
     musl-tools \
     musl-dev \
     g++ \
-    musl-gcc
-
-# 设置 musl 交叉编译环境
-ENV CC=musl-gcc
-ENV CXX=musl-g++
-
-# 添加 Rust 的 musl 目标
-RUN rustup target add x86_64-unknown-linux-musl
+    musl-gcc 
 
 # 设置工作目录
 WORKDIR /usr/src/
 
-# 克隆仓库
+# 克隆代码仓库
 RUN git clone https://github.com/DelphinusLab/zkwasm-typescript-mini-server --branch release-v1
 
 WORKDIR /usr/src/zkwasm-typescript-mini-server/dbservice
 
-# 使用 musl 进行静态编译
-# 编译 Rust 代码，使用 musl 目标进行静态编译
+# 使用 musl 目标进行编译
+RUN rustup target add x86_64-unknown-linux-musl
 RUN cargo build --release --target x86_64-unknown-linux-musl
 
-# 第二阶段：最小运行环境
-FROM alpine:latest
+# 第二阶段：最小 Debian 运行环境
+FROM debian:latest
 
 WORKDIR /zkdb
 
