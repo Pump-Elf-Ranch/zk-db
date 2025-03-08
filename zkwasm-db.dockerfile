@@ -33,6 +33,6 @@ FROM alpine:latest
 
 WORKDIR /zkdb
 
-COPY --from=builder /usr/src/zkwasm-typescript-mini-server/dbservice/target/release/csm_service /zkdb/csm_service
+COPY --from=builder /usr/src/zkwasm-typescript-mini-server/target/release/csm_service /zkdb/csm_service
 
 EXPOSE 3030
