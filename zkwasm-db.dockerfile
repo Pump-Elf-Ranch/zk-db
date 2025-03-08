@@ -1,5 +1,5 @@
 # Use the official Rust image from the Docker Hub
-FROM rust:latest AS builder
+FROM rust:alpine3.21 AS builder
 # Install Node.js 18.6
 RUN apt-get update && \
     apt-get install -y curl && \
@@ -27,19 +27,11 @@ WORKDIR /usr/src/zkwasm-typescript-mini-server/dbservice
 # Build the application
 RUN cargo build --release
 
-FROM rust:alpine3.21
+FROM alpine:latest
 
 WORKDIR /zkdb
 
 COPY --from=builder /usr/src/zkwasm-typescript-mini-server/target/release/csm_service .
-
-RUN apt-get update && apt-get install -y \
-    git \
-    cmake \
-    pkg-config \
-    libssl-dev \
-    libclang-dev \
-    curl
 
 RUN chmod +x csm_service
 EXPOSE 3030
